@@ -1,18 +1,28 @@
-import { FlatCompat } from '@eslint/eslintrc'
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const compat = new FlatCompat({
-  // import.meta.dirname is available after Node.js v20.11.0
-  baseDirectory: import.meta.dirname,
-})
+  baseDirectory: __dirname,
+});
 
 const eslintConfig = [
-  ...compat.config({
-    extends: ['next'],
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
     rules: {
-      'react/no-unescaped-entities': 'off',
-      '@next/next/no-page-custom-font': 'off',
-    },
-  }),
-]
+      // Disable individual rules
+      "@typescript-eslint/no-unused-vars": "off",
+      "no-unused-vars": "off",
+      // You can add more rules to disable:
+      "no-console": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      // Set rule levels: "off", "warn", or "error"
+      "prefer-const": "warn"
+    }
+  }
+];
 
-export default eslintConfig
+export default eslintConfig;

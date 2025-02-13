@@ -20,8 +20,13 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "noUnusedLocals": false,      // Add this to disable unused locals warning
+    "noUnusedParameters": false   // Add this to disable unused parameters warning
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "rules": {
+      "@typescript-eslint/no-unused-vars": "off"
+  }
 }
