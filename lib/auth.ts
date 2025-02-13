@@ -38,7 +38,7 @@ export const authOptions = {
                         phoneNumber: user.phoneNumber,
                     };
                 } catch (error) {
-                    throw new Error(`Authentication failed: ${error}`);
+                    throw error;
                 }
             }
         })
