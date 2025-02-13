@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDatabase } from "./database";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
+import { JWT } from "next-auth/jwt";
+import { Session } from "next-auth";
 
 export const authOptions = {
     providers: [
@@ -38,21 +39,21 @@ export const authOptions = {
                         phoneNumber: user.phoneNumber,
                     };
                 } catch (error) {
-                    throw error;
+                    throw new Error(`Authentication failed: ${error}`);
                 }
             }
         })
     ],
     callbacks: {
-        async jwt({ token, user }: { token: any; user?: any }) {
+        async jwt({ token, user }: { token: JWT; user?: unknown }) {
             if (user) {
-                token.user = user;
-            }
+                token.user = { id: (user as { id: string }).id, ...user };
+              }
             return token;
         },
-        async session({ session, token }: { session: any; token: any }) {
+        async session({ session, token }: { session: Session; token: JWT }) {
             if (token.user) {
-                session.user = token.user;
+                session.user = token.user as { id: string; }; // Cast token.user to the correct type
             }
             return session;
         }

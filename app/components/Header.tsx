@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -11,7 +10,7 @@ function Header() {
         try {
             await signOut();
         } catch (error) {
-            
+            console.log(error);
         }
     };
 
