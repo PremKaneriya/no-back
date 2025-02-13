@@ -18,6 +18,7 @@ export async function GET() {
 
         return NextResponse.json(notes);
     } catch (error) {
+        console.error(error);
         return NextResponse.json(`Failed to fetch notes: ${error}`, { status: 500 });
     }
 }
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
         
         return NextResponse.json(note);
     } catch (error) {
+        console.error(error);
         return NextResponse.json(`Failed to create note: ${error}`, { status: 500 });
     }
 }

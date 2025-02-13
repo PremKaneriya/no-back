@@ -27,7 +27,7 @@ const Dashboard = () => {
                 }
                 setNotes(data);
             } catch (error) {
-                console.error(error);
+                console.log(error);
             }
         };
         fetchNotes();
@@ -55,7 +55,7 @@ const Dashboard = () => {
             setContent("");
             setError("");
         } catch (error) {
-            console.error(error);
+            console.log(error);
             setError("Failed to create note");
         }
     };

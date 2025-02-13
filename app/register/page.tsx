@@ -33,7 +33,7 @@ const Register = () => {
 
             router.push('/login');
         } catch (error) {
-            console.error(error);
+            console.log(error);
         }
     };
 
