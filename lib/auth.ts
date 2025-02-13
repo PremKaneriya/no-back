@@ -1,10 +1,10 @@
-import { NextAuthOptions } from "next-auth";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDatabase } from "./database";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -21,14 +21,12 @@ export const authOptions: NextAuthOptions = {
                 try {
                     await connectToDatabase();
 
-                    // Fetch user by phone number
                     const user = await User.findOne({ phoneNumber: credentials.phoneNumber });
 
                     if (!user) {
                         throw new Error("User not found");
                     }
 
-                    // Compare password
                     const isValid = await bcrypt.compare(credentials.password, user.password);
                     if (!isValid) {
                         throw new Error("Invalid password");
@@ -40,19 +38,19 @@ export const authOptions: NextAuthOptions = {
                         phoneNumber: user.phoneNumber,
                     };
                 } catch (error) {
-                    throw new Error("Authentication failed");
+                    throw new Error(`Authentication failed: ${error}`);
                 }
             }
         })
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user }: { token: any; user?: any }) {
             if (user) {
                 token.user = user;
             }
             return token;
         },
-        async session({ session, token }) {
+        async session({ session, token }: { session: any; token: any }) {
             if (token.user) {
                 session.user = token.user;
             }
@@ -60,11 +58,11 @@ export const authOptions: NextAuthOptions = {
         }
     },
     pages: {
-        signIn: '/login',
-        error: '/login',
+        signIn: "/login",
+        error: "/login",
     },
     session: {
-        strategy: "jwt",
+        strategy: "jwt" as const,  // ✅ Fix the type issue
         maxAge: 30 * 24 * 60 * 60,
     },
     secret: process.env.NEXTAUTH_SECRET

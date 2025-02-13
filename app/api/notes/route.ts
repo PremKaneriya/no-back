@@ -1,13 +1,13 @@
 import { authOptions } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/database";
 import Note from "@/models/Notes";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 
 // Get all notes for the logged-in user
 export async function GET() {
     try {
-        const session = await getServerSession(authOptions);
+        const session: { user: { id: string; }; } | null = await getServerSession(authOptions);
 
         if (!session) {
             return NextResponse.json("Unauthorized", { status: 401 });
@@ -25,7 +25,7 @@ export async function GET() {
 // Create a new note
 export async function POST(request: Request) {
     try {
-        const session = await getServerSession(authOptions);
+        const session: { user: { id: string; }; } | null = await getServerSession(authOptions);
 
         if (!session) {
             return NextResponse.json("Unauthorized", { status: 401 });
