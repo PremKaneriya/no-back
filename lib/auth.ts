@@ -38,8 +38,8 @@ export const authOptions = {
                         email: user.email,
                         phoneNumber: user.phoneNumber,
                     };
-                }   catch (error) {
-                        console.log("Auth Error", error);
+                }   catch (_error) {
+                        console.log("Auth Error", _error);
                         throw new Error("Authentication failed");
                 }
             }
