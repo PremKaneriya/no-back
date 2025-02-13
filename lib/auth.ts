@@ -33,12 +33,11 @@ export const authOptions = {
                         email: user.email,
                         phoneNumber: user.phoneNumber,
                     };
-                }// eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    catch (error: unknown) {  
-                        const errorMessage = error instanceof Error ? error.message : "Authentication failed";
-                        console.error("Auth Error:", errorMessage);
-                        throw new Error(errorMessage);
-                    }                                
+                }  catch (_error: unknown) {  
+                    const errorMessage = _error instanceof Error ? _error.message : "Authentication failed";
+                    console.error("Auth Error:", errorMessage);
+                    throw new Error(errorMessage);
+                }                                
             }
         })
     ],
