@@ -18,29 +18,25 @@ export const authOptions = {
                 if (!credentials?.email || !credentials?.password || !credentials?.phoneNumber) {
                     throw new Error("Missing credentials");
                 }
-
                 try {
                     await connectToDatabase();
-
                     const user = await User.findOne({ phoneNumber: credentials.phoneNumber });
-
                     if (!user) {
                         throw new Error("User not found");
                     }
-
                     const isValid = await bcrypt.compare(credentials.password, user.password);
                     if (!isValid) {
                         throw new Error("Invalid password");
                     }
-
                     return {
                         id: user._id.toString(),
                         email: user.email,
                         phoneNumber: user.phoneNumber,
                     };
-                }  catch (error) {
-                    console.error("Auth Error:", error); // Use console.error instead of console.log
-                    throw new Error("Authentication failed");
+                }  catch (error: unknown) {  // Add type annotation
+                    const errorMessage = error instanceof Error ? error.message : "Authentication failed";
+                    console.error("Auth Error:", errorMessage);
+                    throw new Error(errorMessage);
                 }                
             }
         })
@@ -49,12 +45,12 @@ export const authOptions = {
         async jwt({ token, user }: { token: JWT; user?: unknown }) {
             if (user) {
                 token.user = { id: (user as { id: string }).id, ...user };
-              }
+            }
             return token;
         },
         async session({ session, token }: { session: Session; token: JWT }) {
             if (token.user) {
-                session.user = token.user as { id: string; }; // Cast token.user to the correct type
+                session.user = token.user as { id: string; };
             }
             return session;
         }
@@ -64,7 +60,7 @@ export const authOptions = {
         error: "/login",
     },
     session: {
-        strategy: "jwt" as const,  // ✅ Fix the type issue
+        strategy: "jwt" as const,
         maxAge: 30 * 24 * 60 * 60,
     },
     secret: process.env.NEXTAUTH_SECRET
