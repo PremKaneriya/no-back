@@ -72,12 +72,6 @@ const Dashboard = () => {
         setNotes((prev) => prev.filter((note) => note._id !== id));
     };
 
-    // Random color generator for notes
-    const getRandomColor = () => {
-        const colors = ["#f28b82", "#fbbc04", "#fff475", "#ccff90", "#a7ffeb", "#cbf0f8", "#aecbfa", "#d7aefb"];
-        return colors[Math.floor(Math.random() * colors.length)];
-    };
-
     return (
 <div className="flex flex-col md:flex-row min-h-screen bg-gray-900 text-white">
     {/* Sidebar for Desktop | Bottom Nav for Mobile */}
@@ -137,29 +131,12 @@ const Dashboard = () => {
                     .map((note) => (
                         <div
                             key={note._id}
-                            style={{ backgroundColor: getRandomColor() }}
-                            className="relative p-6 rounded-2xl shadow-md text-black w-full"
+                            className="relative p-6 bg-gray-700 rounded-2xl shadow-md text-black w-full"
                         >
-                            {/* Pin & Delete Buttons */}
-                            <div className="absolute top-2 right-2 flex space-x-2">
-                                <button
-                                    onClick={() => handlePinNote(note._id)}
-                                    className={`p-2 rounded-full ${note.pinned ? "bg-yellow-400" : "bg-gray-300"}`}
-                                >
-                                    <FaThumbtack />
-                                </button>
-                                <button
-                                    onClick={() => handleDeleteNote(note._id)}
-                                    className="p-2 rounded-full bg-red-400"
-                                >
-                                    <FaTrash />
-                                </button>
-                            </div>
-
                             {/* Note Content */}
                             <h3 className="text-lg font-semibold">{note.title}</h3>
                             <p className="mt-2">{note.content}</p>
-                            <p className="text-xs text-gray-600 mt-4">
+                            <p className="text-xs text-gray-900 mt-4">
                                 Created: {new Date(note.createdAt).toLocaleString()}
                             </p>
                         </div>
