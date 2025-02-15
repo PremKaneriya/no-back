@@ -19,9 +19,11 @@ export const connectToDatabase = async () => {
 
     if (!cashed.promise) {
         const opts = {
-            bufferCommands: true,
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
             maxPoolSize: 10,
-        }
+        };
+        
 
         cashed.promise = mongoose
             .connect(MONGO_URI, opts)
