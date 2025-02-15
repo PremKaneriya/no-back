@@ -6,25 +6,26 @@ if (!MONGO_URI) {
     throw new Error("MONGO_URI is not defined");
 }
 
+// Use global cache to prevent reconnecting on each request
 let cached = (global as any).mongoose || { conn: null, promise: null };
 
 export const connectToDatabase = async () => {
     if (cached.conn) return cached.conn;
 
     if (!cached.promise) {
-        const opts = {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            maxPoolSize: 10, // Ensures efficient connection pooling
-        };
-
-        cached.promise = mongoose
-            .connect(MONGO_URI, opts)
-            .then(m => m.connection)
-            .catch(error => {
-                console.error("Database connection error:", error.message);
-                return Promise.reject(error);
-            });
+        console.log("Connecting to MongoDB...");
+        cached.promise = mongoose.connect(MONGO_URI, {
+            bufferCommands: false, // Improves performance
+            maxPoolSize: 10, // Limits connection pool size for efficiency
+        })
+        .then(m => {
+            console.log("Connected to MongoDB!");
+            return m.connection;
+        })
+        .catch(error => {
+            console.error("Database connection error:", error.message);
+            return Promise.reject(error);
+        });
     }
 
     try {
@@ -37,4 +38,5 @@ export const connectToDatabase = async () => {
     return cached.conn;
 };
 
+// Store cached connection globally
 (global as any).mongoose = cached;
