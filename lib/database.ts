@@ -4,38 +4,44 @@ const MONGO_URI = process.env.MONGO_URI!;
 
 if (!MONGO_URI) {
     throw new Error("MONGO_URI is not defined");
+    }
+
+let cashed = global.mongoose;
+
+if (!cashed) {
+    cashed = global.mongoose = {conn: null, promise: null}; 
 }
 
-let cached = (global as any).mongoose || { conn: null, promise: null };
-
 export const connectToDatabase = async () => {
-    if (cached.conn) return cached.conn;
+    if (cashed.conn) {
+        return cashed.conn;
+    }
 
-    if (!cached.promise) {
-        console.log("🔄 Connecting to MongoDB...");
-        cached.promise = mongoose
-            .connect(MONGO_URI, {
-                maxPoolSize: 10, // Optimized connection pooling
-                bufferCommands: false,
-            })
-            .then((m) => {
-                console.log("✅ Connected to MongoDB!");
-                return m.connection;
-            })
+    if (!cashed.promise) {
+        const opts = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            maxPoolSize: 10,
+        };
+        
+
+        cashed.promise = mongoose
+            .connect(MONGO_URI, opts)
+            .then(() => mongoose.connection)
             .catch((error) => {
-                console.error("❌ Database connection error:", error.message);
-                return Promise.reject(error);
+                console.error("Database connection error:", error);
+                return Promise.reject(error); // Ensure the error is propagated
             });
+    
     }
 
     try {
-        cached.conn = await cached.promise;
-    } catch (error: any) {
-        cached.promise = null;
-        throw new Error(`Database connection failed: ${error.message}`);
+        cashed.conn = await cashed.promise;
+    } catch (error) {
+        cashed.promise = null;
+        throw new Error(`Failed to connect to database ${error}`);
     }
+ 
+    return cashed.conn;
 
-    return cached.conn;
-};
-
-(global as any).mongoose = cached;
+}
